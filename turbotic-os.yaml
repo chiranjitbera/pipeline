@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delphi-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: delphi-app
+  template:
+    metadata:
+      labels:
+        app: delphi-app
+    spec:
+      imagePullSecrets:
+        - name: turbotic-acr
+      containers:
+        - name: delphi-app
+          image: turbotic.azurecr.io/delphi-app:Houston-v2.5.0.379-distroless
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BUILD_NUMBER
+              value: '6624'
+            - name: RELEASE_NAME
+              value: 'Houston-v2.5.0.379-distroless'
+            - name: WEB_ADMIN_API_URL
+              value: 'https://admin-turbotic-poc.fiserv.co.in/api/v1/'
+            - name: WEB_ADMIN_DASHBOARD_PUBLIC_URL
+              value: 'https://admin-turbotic-poc.fiserv.co.in'
+            - name: NODE_ENV
+              value: 'production'
+            - name: NODE_PORT
+              value: '8080'
+            - name: HOST_NAME
+              value: 'turbotic-poc.fiserv.co.in'
+            - name: HOST_PORT
+              value: '80'
+            - name: HOST_PROTO
+              value: 'http'
+            - name: ADMIN_SERVER_BASE_URL
+              value: 'http://lb-delphi-admin-app:8089'
+            - name: MONGO_DB_CONN_STRING
+              value: 'mongodb://192.168.1.114:27017/turbotic-term-os'
+            - name: SYNC_MONGO_DB_CONN_STRING
+              value: 'mongodb://192.168.1.114:27017/turbotic-term-sync'          
+            - name: MONGODB_DBNAME
+              value: 'turbotic-term-os'
+            - name: INTERNAL_ACCESS_KEY
+              value: 'abc123456'
+            - name: DISABLE_SMART_CACHE
+              value: 'true'
+            - name: DISABLE_RT
+              value: 'true'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-delphi-app
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: turbotic-delphi
+spec:
+  selector:
+    app: delphi-app
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8088
+      targetPort: 8080
