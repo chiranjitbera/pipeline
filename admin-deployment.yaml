@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delphi-admin-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: delphi-admin-app
+  template:
+    metadata:
+      labels:
+        app: delphi-admin-app
+    spec:
+      imagePullSecrets:
+        - name: 'turbotic-acr'
+      containers:
+        - name: delphi-admin-app
+          image: turbotic.azurecr.io/delphi-admin-app:Houston-v2.0.0.22
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: BUILD_NUMBER
+              value: '6394'
+            - name: RELEASE_NAME
+              value: 'Houston-v2.0.0.22'
+            - name: DELPHI_OS_BASE_URL
+              value: ''                                  
+            - name: SERVER_DELPHI_BASEURL_HTTPS
+              value: 'http://lb-delphi-app:8081'                                  
+            - name: NODE_ENV
+              value: 'production'
+            - name: API_LOCAL_PORT
+              value: '80'
+            - name: API_VHOST_DOMAIN
+              value: 'admin-'
+            - name: API_VHOST_PORT
+              value: '443'
+            - name: API_VHOST_PROTO
+              value: 'https'
+            - name: MONGO_DB_CONN_STRATEGY
+              value: 'ENV'                   
+            - name: MONGO_DB_CONN_STRING
+              value: 'mongodb://192.168.1.14:27017/turbotic-admin'
+            - name: AZURE_KEY_VAULT_NAME
+              value: ''
+            - name: AZURE_TENANT_ID
+              value: ''
+            - name: AZURE_CLIENT_ID
+              value: ''
+            - name: AZURE_CLIENT_SECRET
+              value: ''
+            - name: SUPPORT_EMAIL_ADDRESS
+              value: ''                          
+            - name: STORAGE_AZURE_CONTAINER_NAME
+              value: 'delphi'
+            - name: IS_CHARGEBEE_DISABLED
+              value: 'true'
+            - name: IS_RECAPTCHA_DISABLED
+              value: 'true'
+            - name: USERFLOW_TOKEN
+              value: ''
+            - name: FROM_EMAIL
+              value: 'no-reply@turbotic.com'    
+            - name: EMAIL_PROVIDER
+              value: ''                     
+            - name: SMTP_HOST
+              value: ''                        
+            - name: SMTP_PORT
+              value: ''                        
+            - name: SMTP_SECURE
+              value: 'false'                   
+            - name: SMTP_SERVICE
+              value: ''                         
+            - name: SMTP_USER
+              value: ''                         
+            - name: SMTP_PASS
+              value: ''                         
+            - name: SEND_GRID_API_KEY
+              value: ''
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-delphi-admin-app
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: turbotic-delphi-admin
+spec:
+  selector:
+    app: delphi-admin-app
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 80              
+
