@@ -17,7 +17,7 @@ spec:
         - name: 'turbotic-acr'
       containers:
         - name: delphi-admin-app
-          image: turbotic.azurecr.io/delphi-admin-app:Houston-v2.5.0.63-distroless
+          image: turbotic.azurecr.io/delphi-admin-app:Houston-v2.5.0.65-distroless
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -25,7 +25,7 @@ spec:
             - name: BUILD_NUMBER
               value: '6394'
             - name: RELEASE_NAME
-              value: 'Houston-v2.5.0.63-distroless'
+              value: 'Houston-v2.5.0.65-distroless'
             - name: DELPHI_OS_BASE_URL
               value: 'https://turbotic-poc.fiserv.co.in'                                  
             - name: SERVER_DELPHI_BASEURL_HTTPS
@@ -54,6 +54,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: lb-delphi-admin-app
+  namespace: default
   annotations:
     service.beta.kubernetes.io/azure-dns-label-name: turbotic-delphi-admin
 spec:
