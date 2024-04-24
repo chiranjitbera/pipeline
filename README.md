@@ -1,1 +1,3 @@
 # pipeline
+
+New variable updated
