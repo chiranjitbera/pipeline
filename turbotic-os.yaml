@@ -17,7 +17,7 @@ spec:
         - name: turbotic-acr
       containers:
         - name: delphi-app
-          image: turbotic.azurecr.io/delphi-app:Houston-v2.5.0.383-distroless
+          image: turbotic.azurecr.io/delphi-app:Houston-v2.5.0.387-distroless
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -25,7 +25,7 @@ spec:
             - name: BUILD_NUMBER
               value: '6624'
             - name: RELEASE_NAME
-              value: 'Houston-v2.5.0.383-distroless'
+              value: 'Houston-v2.5.0.387-distroless'
             - name: WEB_ADMIN_API_URL
               value: 'https://admin-turbotic-poc.fiserv.co.in/api/v1/'
             - name: WEB_ADMIN_DASHBOARD_PUBLIC_URL
